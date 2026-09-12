@@ -3,150 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creative Static Studio</title>
+    <title>DevShell // Guest Terminal</title>
     <style>
-        /* Base Styling & Dark Mode Aesthetics */
         body {
-            margin: 0;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background-color: #0b0c10;
-            color: #c5c6c7;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Navigation Layout */
-        aside {
-            width: 260px;
-            background-color: #1f2833;
+            background-color: #0a0e14;
+            color: #00ff66;
+            font-family: 'Courier New', Courier, monospace;
             padding: 30px;
-            display: flex;
-            flex-direction: column;
-            border-right: 2px solid #45f3ff;
-        }
-
-        aside h1 {
-            color: #66fcf1;
-            font-size: 1.5rem;
-            margin-bottom: 40px;
-            letter-spacing: 1px;
-        }
-
-        aside nav a {
-            color: #c5c6c7;
-            text-decoration: none;
-            padding: 12px 0;
-            display: block;
-            font-weight: 600;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        aside nav a.active {
-            color: #45f3ff;
-        }
-
-        /* Main Content Workspace */
-        main {
-            flex-grow: 1;
-            padding: 40px;
-            overflow-y: auto;
-        }
-
-        header {
-            margin-bottom: 40px;
-        }
-
-        header h2 {
-            font-size: 2.2rem;
-            color: #ffffff;
-            margin: 0 0 10px 0;
-        }
-
-        header p {
             margin: 0;
-            color: #66fcf1;
+            line-height: 1.5;
         }
-
-        /* Responsive Creative Layout Grid */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1xl));
-            gap: 25px;
+        .terminal-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
         }
-
-        /* Stylized Static Cards */
-        .card {
-            background-color: #1f2833;
-            border-radius: 12px;
-            padding: 25px;
-            border-left: 5px solid #66fcf1;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        .header-text {
+            color: #00bcff;
+            margin-bottom: 20px;
+            white-space: pre;
         }
-
-        .card h3 {
-            color: #ffffff;
-            margin-top: 0;
+        .history {
             margin-bottom: 15px;
         }
-
-        .card p {
-            line-height: 1.6;
-            font-size: 0.95rem;
+        .line {
+            margin-bottom: 8px;
         }
-
-        .tag {
-            display: inline-block;
-            background: rgba(102, 252, 241, 0.1);
-            color: #66fcf1;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
+        .input-line {
+            display: flex;
+            align-items: center;
+        }
+        .prompt {
+            color: #ff0055;
+            margin-right: 10px;
             font-weight: bold;
-            margin-top: 15px;
+        }
+        input {
+            background: transparent;
+            border: none;
+            color: #00ff66;
+            font-family: inherit;
+            font-size: 1rem;
+            flex-grow: 1;
+            outline: none;
+        }
+        .system-response {
+            color: #abb2bf;
+            padding-left: 15px;
+            margin-bottom: 12px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Static Navigation Panel -->
-    <aside>
-        <h1>NEON.STUDIO</h1>
-        <nav>
-            <a href="#" class="active">Dashboard</a>
-            <a href="#">Projects</a>
-            <a href="#">Gallery</a>
-            <a href="#">Settings</a>
-        </nav>
-    </aside>
+<div class="terminal-wrapper">
+    <!-- Retro ASCII Brand Banner -->
+    <div class="header-text">
+ _  _  ____  __    __     __  
+( )/ )(  __)(  )  (  )   /  \ 
+ )  (  ) _)  / (_/\/ (_/\(  O )
+(_)\_)(____)\____/\____/ \__/ 
+Welcome to GuestShell v2.6. Type 'help' for core execution links.
+    </div>
 
-    <!-- Main Workspace Section -->
-    <main>
-        <header>
-            <h2>Design Showcase</h2>
-            <p>A completely functional CSS grid layout without a single line of script.</p>
-        </header>
+    <!-- Live Terminal Activity Log -->
+    <div class="history" id="terminalHistory"></div>
 
-        <!-- Dynamic Looking, Script-Free Cards -->
-        <div class="grid-container">
-            <div class="card">
-                <h3>Visual Design</h3>
-                <p>Using strict geometric spacing and high-contrast color boundaries to deliver modern interfaces effortlessly.</p>
-                <span class="tag">Interface</span>
-            </div>
+    <!-- Active User Entry Segment -->
+    <div class="input-line">
+        <span class="prompt">guest@github.io:~$</span>
+        <input type="text" id="cmdInput" autofocus autocomplete="off" spellcheck="false">
+    </div>
+</div>
 
-            <div class="card" style="border-left-color: #45f3ff;">
-                <h3>Typography Structure</h3>
-                <p>System fonts scale seamlessly across devices without layout shifts, protecting page performance.</p>
-                <span class="tag">Performance</span>
-            </div>
+<script>
+    const cmdInput = document.getElementById('cmdInput');
+    const history = document.getElementById('terminalHistory');
 
-            <div class="card" style="border-left-color: #90fc66;">
-                <h3>Pure CSS Architecture</h3>
-                <p>Grid elements rely fully on the browser rendering engine, requiring zero processor overhead for calculations.</p>
-                <span class="tag">Architecture</span>
-            </div>
-        </div>
-    </main>
+    // Available operational commands
+    const commands = {
+        help: "Supported modules: <br>• <b>about</b> - Reveal developer background profile.<br>• <b>skills</b> - Output structural project technology stacks.<br>• <b>clear</b> - Reset active screen history.",
+        about: "Loading target profile... Status: Active.<br>I am a creative developer deploying static experiments onto GitHub Pages.",
+        skills: "Technological Competencies:<br> [■■■■■■■■□□] Frontend Engineering (HTML/CSS/JS)<br> [■■■■■■□□□□] Automation Engines (Git/CI Actions)"
+    };
+
+    // Keep execution focused on input block
+    document.addEventListener('click', () => cmdInput.focus());
+
+    cmdInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const rawValue = this.value.trim();
+            const cleanCmd = rawValue.toLowerCase();
+            
+            if (rawValue === "") return;
+
+            // Render current command line
+            const userEcho = document.createElement('div');
+            userEcho.className = 'line';
+            userEcho.innerHTML = `<span class="prompt">guest@github.io:~$</span> ${rawValue}`;
+            history.appendChild(userEcho);
+
+            // Execute custom commands
+            const output = document.createElement('div');
+            output.className = 'system-response';
+
+            if (cleanCmd === 'clear') {
+                history.innerHTML = '';
+            } else if (commands[cleanCmd]) {
+                output.innerHTML = commands[cleanCmd];
+                history.appendChild(output);
+            } else {
+                output.innerHTML = `Command execution error: '${rawValue}' not recognized. Type 'help' for diagnostics.`;
+                history.appendChild(output);
+            }
+
+            this.value = '';
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+    });
+</script>
 
 </body>
 </html>
